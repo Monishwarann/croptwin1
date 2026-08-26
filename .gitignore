@@ -1,0 +1,39 @@
+# Node / Frontend Dependencies & Builds
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+backend/__pycache__/
+backend/services/__pycache__/
+backend/database/__pycache__/
+backend/schemas/__pycache__/
+backend/*.db
+backend/croptwin.db
+
+# Environment & Virtual Environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+venv/
+env/
+ENV/
+backend/venv/
+
+# Uploads (Keep sample images, ignore user uploaded images)
+backend/uploads/*
+!backend/uploads/sample_tomato_leaf.jpg
+!backend/uploads/sample.jpg
+!backend/uploads/.gitkeep
+
+# System Files
+.DS_Store
+Thumbs.db
