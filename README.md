@@ -1,60 +1,47 @@
-# Self-Evolving AI Digital Twin for Discovery and Forecasting of Emerging Crop Health Conditions
+# CropTwin — Self-Evolving AI Digital Twin Platform
 
-**Final-Year Academic & Research Project**
-
-This software provides a full-stack agricultural monitoring platform combining deep-learning crop disease identification (EfficientNet-B0), open-set unseen pattern discovery, expert knowledge verification, environmental telemetry, health forecasting, and field Digital Twin visualization.
+CropTwin is a full-stack agricultural monitoring platform combining PyTorch deep-learning crop disease identification (EfficientNet-B0), open-set unseen pattern discovery, expert knowledge verification, Firebase authentication, environmental telemetry, health forecasting, and interactive field Digital Twin visualization.
 
 ---
 
-## 📁 Project Structure
+## 🚀 Key Features
+
+- **Deep Learning Disease Detection**: Real-time PyTorch EfficientNet-B0 inference across 38 PlantVillage crop disease classes.
+- **Open-Set Unseen Pattern Discovery**: Out-of-distribution confidence thresholding to trigger "Unseen Pattern" alerts for emerging crop health risks.
+- **Firebase Protected Authentication**: Integrated Firebase Auth supporting Email/Password sign-in, user registration, and Google One-Tap authentication.
+- **Interactive Inspection Reports**: Audit trail table with detailed single-report inspection modals, condition formatting, and printable export features.
+- **Health Forecasting Engine**: Multi-horizon time-series health projections across 7-day, 14-day, and 21-day horizons.
+- **Virtual Field Digital Twin**: Field state visualization combining environmental parameters (NDVI, temperature, rainfall, humidity) with temporal event logs.
+- **User Profile & Customization**: Customizable open-set decision thresholds, default monitored plot selection, and personal researcher details.
+
+---
+
+## 📁 Repository Structure
 
 ```
 CropTwin/
-│
 ├── backend/
 │   ├── main.py                     # FastAPI application endpoints
 │   ├── requirements.txt            # Python backend dependencies
-│   ├── croptwin.db                 # SQLite database (auto-generated)
-│   ├── models/                     # PyTorch model weights storage
-│   ├── services/
-│   │   ├── disease_detection.py    # EfficientNet inference & 38 PlantVillage classes
-│   │   ├── unknown_detection.py    # Open-set confidence thresholding
-│   │   ├── health_scoring.py       # Multi-factor health scoring algorithm
-│   │   └── forecasting.py          # Time-series trend forecasting service
-│   ├── database/
-│   │   ├── database.py             # SQLAlchemy engine & session setup
-│   │   ├── models.py               # ORM Database Models
-│   │   └── crud.py                 # Data access layer
-│   ├── schemas/
-│   │   └── schemas.py              # Pydantic schemas
+│   ├── best_efficientnet_crop_disease.pth # Trained PyTorch EfficientNet-B0 weights
+│   ├── test_all_endpoints.py       # Full 12-endpoint automated test suite
+│   ├── database/                   # SQLAlchemy engine, ORM models & CRUD
+│   ├── schemas/                    # Pydantic data validation schemas
+│   ├── services/                   # Disease detection, open-set & forecasting services
 │   └── uploads/                    # Leaf images storage
 │
 ├── frontend/
-│   ├── package.json                # Node dependencies
-│   ├── index.html                  # HTML template with Inter typography
-│   ├── vite.config.js              # Vite server & backend API proxy
+│   ├── package.json                # Node dependencies & scripts
+│   ├── vite.config.js              # Vite server & FastAPI backend proxy
+│   ├── index.html                  # Main HTML entry
 │   └── src/
 │       ├── main.jsx                # React DOM root
-│       ├── App.jsx                 # Layout & Router
-│       ├── api/
-│       │   └── api.js              # Backend API bridge
-│       ├── components/
-│       │   ├── Sidebar.jsx         # Clean navigation sidebar
-│       │   ├── Header.jsx          # Top bar with field switcher & API health status
-│       │   ├── HealthCard.jsx      # Telemetry metric cards
-│       │   ├── PredictionCard.jsx  # Disease analysis result cards
-│       │   ├── WeatherCard.jsx     # Environmental & NDVI cards
-│       │   └── ChartCard.jsx       # Recharts trend line charts
-│       ├── pages/
-│       │   ├── Login.jsx           # Local auth login
-│       │   ├── Dashboard.jsx       # Field overview dashboard
-│       │   ├── DiseaseDetection.jsx# Leaf image upload & analysis
-│       │   ├── UnknownConditions.jsx# Open-set alerts & expert verifications
-│       │   ├── Forecast.jsx        # Multi-horizon health projections
-│       │   ├── DigitalTwin.jsx     # Virtual field twin representation
-│       │   └── Reports.jsx         # Exportable audit reports & CSV dataset
-│       └── styles/
-│           └── global.css          # Professional agricultural design system
+│       ├── App.jsx                 # App layout, router & Firebase auth listener
+│       ├── firebase.js             # Firebase SDK setup (Auth, Firestore, Analytics)
+│       ├── api/                    # Backend API bridge
+│       ├── components/             # Reusable UI components (Sidebar, Header, Cards)
+│       ├── pages/                  # Page views (Dashboard, Detection, Unknowns, Forecast, DigitalTwin, Reports, Profile, Login)
+│       └── styles/                 # Global styling system
 │
 └── README.md
 ```
@@ -63,7 +50,7 @@ CropTwin/
 
 ## ⚙️ Installation & Running
 
-### 1. Backend (FastAPI)
+### 1. Backend Setup (FastAPI)
 
 ```bash
 # Navigate to backend directory
@@ -77,36 +64,63 @@ venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Start FastAPI server with Uvicorn
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
+# Start FastAPI server
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-Backend will run on `http://127.0.0.1:8000`  
-Swagger API Docs available at `http://127.0.0.1:8000/docs`
+- **Backend API**: `http://127.0.0.1:8000`  
+- **Swagger Interactive Docs**: `http://127.0.0.1:8000/docs`
 
 ---
 
-### 2. Frontend (React + Vite)
+### 2. Frontend Setup (React + Vite)
 
 ```bash
 # Open a second terminal and navigate to frontend directory
 cd frontend
 
-# Install Node modules
+# Install dependencies
 npm install
 
 # Start Vite development server
 npm run dev
 ```
 
-Frontend will run on `http://localhost:5173`
+- **Frontend App**: `http://localhost:5173`
 
 ---
 
-## 🔍 Verification
+## 🧪 Testing Suite
 
-1. Open `http://localhost:5173` in your browser.
-2. Sign in using the academic prototype credentials:
-   - **Username**: `researcher`
-   - **Password**: `admin123`
-3. Observe the green **"Connected (API v1.0)"** status badge in the header, confirming real-time HTTP bridge between Vite frontend and FastAPI backend.
+### Backend API Tests
+Run the comprehensive 12-endpoint automated test suite:
+```bash
+cd backend
+python test_all_endpoints.py
+```
+
+### Frontend Production Build
+Verify production asset compilation:
+```bash
+cd frontend
+npm run build
+```
+
+---
+
+## 📡 API Endpoint Reference
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/` | Root API status & project information |
+| `GET` | `/health` | API health check & timestamp |
+| `POST` | `/auth/login` | Authentication endpoint |
+| `GET` | `/fields` | Returns active field plots list |
+| `GET` | `/dashboard/overview` | Field health telemetry & diagnostic summary |
+| `POST` | `/predict/disease` | Leaf image upload & PyTorch EfficientNet inference |
+| `GET` | `/unknown/alerts` | Unseen pattern open-set alert logs |
+| `POST` | `/unknown/{id}/verify` | Submits expert verification for unseen patterns |
+| `GET` | `/environment` | Environmental history (NDVI, temp, rainfall) |
+| `GET` | `/forecast/{field_id}` | 7, 14, 21-day health projections |
+| `GET` | `/digital-twin/{field_id}` | Digital twin state & event timeline |
+| `GET` | `/reports` | Inspection audit trail & export dataset |
