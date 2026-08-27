@@ -177,10 +177,13 @@ def predict_disease(image_bytes: bytes, filename: str = "", top_k_num: int = 5) 
                 "confidence_percentage": f"{float(prob) * 100:.1f}%"
             })
 
+        formatted_closest_class = f"{crop} - {condition}"
+
         return {
             "crop": crop,
             "predicted_class": predicted_raw_class,
             "condition": condition,
+            "closest_known_class": formatted_closest_class,
             "confidence": round(best_confidence, 4),
             "confidence_percentage": f"{best_confidence * 100:.1f}%",
             "risk_level": risk_level,

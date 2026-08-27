@@ -114,3 +114,18 @@ class Verification(Base):
     expert_name = Column(String, default="Agronomist Expert")
 
     unknown_obs = relationship("UnknownObservation", back_populates="verification")
+
+
+class KnowledgeBaseEntry(Base):
+    __tablename__ = "knowledge_base"
+
+    id = Column(Integer, primary_key=True, index=True)
+    crop = Column(String, nullable=False)
+    condition = Column(String, nullable=False)
+    symptoms = Column(Text, nullable=True)
+    severity = Column(String, default="Medium")
+    date_added = Column(DateTime, default=datetime.utcnow)
+    source = Column(String, default="PlantVillage Standard Dataset")
+    verification_status = Column(String, default="Standard Trained Class")
+    notes = Column(Text, nullable=True)
+

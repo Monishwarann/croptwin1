@@ -15,19 +15,28 @@ export default function Header({ user, selectedField, onSelectField, onLogout })
       justifyContent: 'space-between',
       boxShadow: 'var(--shadow-subtle)'
     }}>
-      {/* Field Selector */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <span style={{ fontSize: '0.875rem', fontWeight: '500', color: 'var(--text-muted)' }}>Selected Field:</span>
-        <select
-          value={selectedField}
-          onChange={(e) => onSelectField(e.target.value)}
-          className="form-select"
-          style={{ width: '220px', padding: '0.4rem 0.75rem', fontWeight: '600' }}
-        >
-          <option value="1">Tomato Field 01 (Tomato)</option>
-          <option value="2">Corn Field 02 (Maize)</option>
-          <option value="3">Potato Field 03 (Potato)</option>
-        </select>
+      {/* Title & Field Selector */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }}>
+        <div>
+          <span style={{ fontSize: '1.125rem', fontWeight: '700', color: 'var(--color-accent)', letterSpacing: '-0.02em' }}>CropTwin</span>
+          <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginLeft: '0.75rem', borderLeft: '1px solid #cbd5e1', paddingLeft: '0.75rem' }}>
+            AI-powered Crop Health Monitoring
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ fontSize: '0.8125rem', fontWeight: '500', color: 'var(--text-muted)' }}>Field:</span>
+          <select
+            value={selectedField}
+            onChange={(e) => onSelectField(e.target.value)}
+            className="form-select"
+            style={{ width: '200px', padding: '0.35rem 0.625rem', fontSize: '0.8125rem', fontWeight: '600' }}
+          >
+            <option value="1">Tomato Field 01 (Tomato)</option>
+            <option value="2">Corn Field 02 (Maize)</option>
+            <option value="3">Potato Field 03 (Potato)</option>
+          </select>
+        </div>
       </div>
 
       {/* User Profile / Logout */}

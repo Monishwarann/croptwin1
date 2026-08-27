@@ -1,89 +1,165 @@
 import React, { useEffect, useState } from 'react';
-import { TrendingUp, AlertCircle, Calendar } from 'lucide-react';
+import { TrendingUp, CloudSun, Calendar, Cpu, RefreshCw } from 'lucide-react';
 import ChartCard from '../components/ChartCard';
-import { fetchForecastData } from '../api/api';
+import { fetchForecastData, fetchEnvironmentalForecast } from '../api/api';
 
 export default function Forecast({ selectedField }) {
-  const [data, setData] = useState(null);
+  const [temperature, setTemperature] = useState(24.5);
+  const [humidity, setHumidity] = useState(68);
+  const [rainfall, setRainfall] = useState(12.0);
+  const [soilMoisture, setSoilMoisture] = useState(45.0);
+
+  const [forecastResult, setForecastResult] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      try {
-        const res = await fetchForecastData(selectedField);
-        setData(res);
-      } catch (err) {
-        console.error('Forecast load error:', err);
-      } finally {
-        setLoading(false);
-      }
+  const loadForecast = async () => {
+    setLoading(true);
+    try {
+      const res = await fetchEnvironmentalForecast({
+        temperature,
+        humidity,
+        rainfall,
+        soil_moisture: soilMoisture
+      });
+      setForecastResult(res);
+    } catch (err) {
+      console.error('Forecast load error:', err);
+    } finally {
+      setLoading(false);
     }
-    load();
+  };
+
+  useEffect(() => {
+    loadForecast();
   }, [selectedField]);
 
-  if (loading) {
-    return <div className="page-container" style={{ padding: '3rem', textAlign: 'center' }}>Loading Time-Series Projections...</div>;
-  }
+  const handleCalculate = (e) => {
+    e.preventDefault();
+    loadForecast();
+  };
+
+  const chartData = [
+    { day: 'Today', health: forecastResult?.forecasts?.[0]?.predicted_health || 75 },
+    { day: '+7 Days', health: forecastResult?.forecasts?.[0]?.predicted_health || 75 },
+    { day: '+14 Days', health: forecastResult?.forecasts?.[1]?.predicted_health || 77 },
+    { day: '+21 Days', health: forecastResult?.forecasts?.[2]?.predicted_health || 80 }
+  ];
 
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1 className="page-title">Health Forecasting Engine</h1>
-        <p className="page-subtitle">Predictive crop health trajectories across 7-day, 14-day, and 21-day horizons</p>
+        <h1 className="page-title">Environmental & Crop Health Forecasting</h1>
+        <p className="page-subtitle">Predictive crop risk simulation based on environmental parameters</p>
       </div>
 
-      {data?.has_sufficient_data ? (
-        <div>
-          <ChartCard
-            title="Historical Health & Predictive Trajectory"
-            data={data.historical_trend || [
-              { day: 'Day -14', health: 80 },
-              { day: 'Day -10', health: 78 },
-              { day: 'Day -7', health: 75 },
-              { day: 'Day -3', health: 73 },
-              { day: 'Today', health: 72 }
-            ]}
-          />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+        {/* Left Column: Environmental Parameter Inputs */}
+        <div className="card">
+          <h3 className="card-title">
+            <CloudSun size={18} color="var(--color-accent)" />
+            <span>Environmental Controls</span>
+          </h3>
 
-          <div style={{ marginTop: '1.5rem' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>Forecasting Horizons Summary</h3>
-            <div className="grid-3">
-              {(data.forecasts || []).map((f, idx) => (
-                <div key={idx} className="card" style={{ borderTop: '4px solid var(--color-accent)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '0.875rem', fontWeight: '600', color: 'var(--text-muted)' }}>
-                      {f.horizon || `${f.horizon_days}-Day`} Forecast
-                    </span>
-                    <Calendar size={18} color="var(--text-muted)" />
-                  </div>
-                  <div style={{ fontSize: '1.75rem', fontWeight: '700', color: 'var(--text-main)', margin: '0.25rem 0' }}>
-                    {f.predicted_health}%
-                  </div>
-                  <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                    Risk: <strong style={{ color: f.risk_level === 'High' ? '#b91c1c' : '#15803d' }}>{f.risk_level}</strong>
-                  </div>
-                  {f.confidence && (
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', marginTop: '0.5rem' }}>
-                      Model Confidence: {f.confidence}
-                    </div>
-                  )}
-                </div>
-              ))}
+          <form onSubmit={handleCalculate}>
+            <div className="form-group">
+              <label className="form-label">Temperature (°C)</label>
+              <input
+                type="number"
+                step="0.1"
+                className="form-input"
+                value={temperature}
+                onChange={(e) => setTemperature(parseFloat(e.target.value))}
+              />
             </div>
+
+            <div className="form-group">
+              <label className="form-label">Humidity (%)</label>
+              <input
+                type="number"
+                step="1"
+                className="form-input"
+                value={humidity}
+                onChange={(e) => setHumidity(parseFloat(e.target.value))}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Rainfall (mm)</label>
+              <input
+                type="number"
+                step="0.5"
+                className="form-input"
+                value={rainfall}
+                onChange={(e) => setRainfall(parseFloat(e.target.value))}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Soil Moisture (%)</label>
+              <input
+                type="number"
+                step="0.5"
+                className="form-input"
+                value={soilMoisture}
+                onChange={(e) => setSoilMoisture(parseFloat(e.target.value))}
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem' }} disabled={loading}>
+              {loading ? 'Calculating Forecast...' : 'Recalculate Health Risk'}
+            </button>
+          </form>
+
+          {/* Model Architecture Note */}
+          <div style={{ marginTop: '1.25rem', padding: '0.75rem 0.875rem', backgroundColor: '#f8fafc', border: '1px solid var(--color-border)', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontWeight: '600', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.375rem', marginBottom: '0.25rem' }}>
+              <Cpu size={14} color="var(--color-accent)" />
+              <span>Model Architecture Note</span>
+            </div>
+            This module uses a multivariate environmental risk scoring model designed to be modularly replaced by a PyTorch LSTM time-series model in future work.
           </div>
         </div>
-      ) : (
-        <div className="card" style={{ padding: '3rem', textAlign: 'center' }}>
-          <AlertCircle size={40} color="#b45309" style={{ marginBottom: '0.75rem' }} />
-          <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
-            Insufficient Historical Data
-          </h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', maxWidth: '500px', margin: '0 auto' }}>
-            {data?.message || 'Insufficient historical data for reliable forecasting. At least 5 field observations are required.'}
-          </p>
+
+        {/* Right Column: Forecast Output & Charts */}
+        <div>
+          {loading ? (
+            <div className="card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+              Calculating environmental trajectory...
+            </div>
+          ) : (
+            <div>
+              <ChartCard
+                title="Future Crop-Health Risk Trajectory"
+                data={chartData}
+                dataKey="health"
+                xKey="day"
+              />
+
+              <div style={{ marginTop: '1.25rem' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.75rem' }}>Forecasting Horizons</h3>
+                <div className="grid-3">
+                  {(forecastResult?.forecasts || []).map((f, idx) => (
+                    <div key={idx} className="card" style={{ borderTop: `4px solid ${f.risk_level === 'High' ? '#b91c1c' : (f.risk_level === 'Medium' ? '#b45309' : 'var(--color-accent)')}` }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span style={{ fontSize: '0.8125rem', fontWeight: '600', color: 'var(--text-muted)' }}>
+                          {f.horizon} Horizon
+                        </span>
+                        <Calendar size={16} color="var(--text-muted)" />
+                      </div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-main)', margin: '0.25rem 0' }}>
+                        {f.predicted_health}%
+                      </div>
+                      <div style={{ fontSize: '0.8125rem' }}>
+                        Risk: <strong style={{ color: f.risk_level === 'High' ? '#b91c1c' : (f.risk_level === 'Medium' ? '#b45309' : '#15803d') }}>{f.risk_level}</strong>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

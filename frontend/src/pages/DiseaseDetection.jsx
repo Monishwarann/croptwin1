@@ -6,7 +6,8 @@ import PredictionCard from '../components/PredictionCard';
 export default function DiseaseDetection({ selectedField }) {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [threshold, setThreshold] = useState(0.75);
+  const [threshold, setThreshold] = useState(0.70);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
@@ -117,23 +118,44 @@ export default function DiseaseDetection({ selectedField }) {
               />
             </div>
 
-            <div className="form-group">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
-                <label className="form-label" style={{ margin: 0 }}>Open-Set Decision Threshold</label>
-                <span style={{ fontSize: '0.8125rem', fontWeight: '600', color: 'var(--color-accent)' }}>{(threshold * 100).toFixed(0)}%</span>
-              </div>
-              <input
-                type="range"
-                min="0.50"
-                max="0.95"
-                step="0.05"
-                value={threshold}
-                onChange={(e) => setThreshold(parseFloat(e.target.value))}
-                style={{ width: '100%' }}
-              />
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Predictions below this confidence score will trigger an "Unseen Pattern" alert.
-              </span>
+            {/* Advanced Model Details Collapsible Section */}
+            <div style={{ marginTop: '1rem', marginBottom: '1rem', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="btn btn-outline"
+                style={{ fontSize: '0.75rem', padding: '0.35rem 0.625rem', width: '100%', justifyContent: 'space-between' }}
+              >
+                <span>⚙ Advanced Model Details & Calibration</span>
+                <span>{showAdvanced ? '▲ Hide' : '▼ Expand'}</span>
+              </button>
+
+              {showAdvanced && (
+                <div style={{
+                  marginTop: '0.75rem',
+                  padding: '0.875rem',
+                  backgroundColor: '#f8fafc',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '6px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
+                    <label className="form-label" style={{ margin: 0, fontSize: '0.8125rem' }}>Open-Set Decision Threshold</label>
+                    <span style={{ fontSize: '0.8125rem', fontWeight: '700', color: 'var(--color-accent)' }}>{(threshold * 100).toFixed(0)}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.50"
+                    max="0.95"
+                    step="0.05"
+                    value={threshold}
+                    onChange={(e) => setThreshold(parseFloat(e.target.value))}
+                    style={{ width: '100%' }}
+                  />
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>
+                    Calibrated open-set confidence boundary (Default: 70%). Predictions below this threshold are flagged as "Unseen Pattern Detected".
+                  </span>
+                </div>
+              )}
             </div>
 
             <button

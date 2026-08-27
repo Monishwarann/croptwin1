@@ -9,6 +9,7 @@ import UnknownConditions from './pages/UnknownConditions';
 import Forecast from './pages/Forecast';
 import DigitalTwin from './pages/DigitalTwin';
 import Reports from './pages/Reports';
+import KnowledgeBase from './pages/KnowledgeBase';
 import Profile from './pages/Profile';
 import { auth, onAuthStateChanged, signOut } from './firebase';
 
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="/unknowns" element={<UnknownConditions />} />
           <Route path="/forecast" element={<Forecast selectedField={selectedField} />} />
           <Route path="/digital-twin" element={<DigitalTwin selectedField={selectedField} />} />
+          <Route path="/knowledge-base" element={<KnowledgeBase />} />
           <Route path="/reports" element={<Reports />} />
           <Route
             path="/profile"

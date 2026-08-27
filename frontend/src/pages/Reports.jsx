@@ -18,6 +18,9 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('All');
   const [cropFilter, setCropFilter] = useState('All');
+  const [diseaseFilter, setDiseaseFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
+  const [riskFilter, setRiskFilter] = useState('All');
   const [selectedReport, setSelectedReport] = useState(null);
 
   useEffect(() => {
@@ -38,6 +41,16 @@ export default function Reports() {
   const filteredReports = reports.filter((r) => {
     if (statusFilter !== 'All' && r.status !== statusFilter) return false;
     if (cropFilter !== 'All' && r.crop !== cropFilter) return false;
+    if (diseaseFilter && !formatConditionName(r.detected_condition).toLowerCase().includes(diseaseFilter.toLowerCase())) return false;
+    if (dateFilter && !r.date.includes(dateFilter)) return false;
+    if (riskFilter !== 'All') {
+      const isHigh = r.health_score < 70 || r.status === 'Unseen Pattern';
+      const isMed = r.health_score >= 70 && r.health_score < 85;
+      const isLow = r.health_score >= 85;
+      if (riskFilter === 'High' && !isHigh) return false;
+      if (riskFilter === 'Medium' && !isMed) return false;
+      if (riskFilter === 'Low' && !isLow) return false;
+    }
     return true;
   });
 
@@ -142,12 +155,53 @@ export default function Reports() {
               className="form-select"
               value={cropFilter}
               onChange={(e) => setCropFilter(e.target.value)}
-              style={{ width: '140px', padding: '0.35rem 0.625rem' }}
+              style={{ width: '130px', padding: '0.35rem 0.625rem' }}
             >
               <option value="All">All Crops</option>
               <option value="Tomato">Tomato</option>
               <option value="Corn">Corn</option>
               <option value="Potato">Potato</option>
+              <option value="Cherry">Cherry</option>
+              <option value="Apple">Apple</option>
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Disease:</span>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="Search condition..."
+              value={diseaseFilter}
+              onChange={(e) => setDiseaseFilter(e.target.value)}
+              style={{ width: '140px', padding: '0.35rem 0.625rem' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Date:</span>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="YYYY-MM-DD"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              style={{ width: '120px', padding: '0.35rem 0.625rem' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Risk:</span>
+            <select
+              className="form-select"
+              value={riskFilter}
+              onChange={(e) => setRiskFilter(e.target.value)}
+              style={{ width: '120px', padding: '0.35rem 0.625rem' }}
+            >
+              <option value="All">All Risks</option>
+              <option value="Low">Low Risk</option>
+              <option value="Medium">Medium Risk</option>
+              <option value="High">High Risk</option>
             </select>
           </div>
         </div>

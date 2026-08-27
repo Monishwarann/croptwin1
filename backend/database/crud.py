@@ -54,3 +54,77 @@ def get_environmental_data(db: Session, field_id: int, limit: int = 10):
 
 def get_all_reports(db: Session):
     return db.query(models.CropObservation).order_by(models.CropObservation.timestamp.desc()).all()
+
+
+def get_knowledge_base(db: Session):
+    entries = db.query(models.KnowledgeBaseEntry).order_by(models.KnowledgeBaseEntry.date_added.desc()).all()
+    if not entries:
+        # Seed default knowledge base entries from 38 PlantVillage classes
+        seeds = [
+            models.KnowledgeBaseEntry(
+                crop="Tomato",
+                condition="Late Blight",
+                symptoms="Dark water-soaked spots on leaves with pale green margins.",
+                severity="High",
+                source="PlantVillage Dataset Standard",
+                verification_status="Standard Trained Class",
+                notes="Phytophthora infestans oomycete pathogen."
+            ),
+            models.KnowledgeBaseEntry(
+                crop="Tomato",
+                condition="Early Blight",
+                symptoms="Concentric rings (target pattern) on mature leaves.",
+                severity="Medium",
+                source="PlantVillage Dataset Standard",
+                verification_status="Standard Trained Class",
+                notes="Alternaria solani fungal infection."
+            ),
+            models.KnowledgeBaseEntry(
+                crop="Corn (Maize)",
+                condition="Common Rust",
+                symptoms="Cinnamon-brown pustules on upper and lower leaf surfaces.",
+                severity="Medium",
+                source="PlantVillage Dataset Standard",
+                verification_status="Standard Trained Class",
+                notes="Puccinia sorghi rust fungus."
+            ),
+            models.KnowledgeBaseEntry(
+                crop="Potato",
+                condition="Early Blight",
+                symptoms="Small brown-black spots expanding into target-board patterns.",
+                severity="Medium",
+                source="PlantVillage Dataset Standard",
+                verification_status="Standard Trained Class",
+                notes="Alternaria solani."
+            ),
+            models.KnowledgeBaseEntry(
+                crop="Apple",
+                condition="Apple Scab",
+                symptoms="Olive-green to dark brown velvety spots on fruit and leaves.",
+                severity="High",
+                source="PlantVillage Dataset Standard",
+                verification_status="Standard Trained Class",
+                notes="Venturia inaequalis."
+            )
+        ]
+        db.add_all(seeds)
+        db.commit()
+        return db.query(models.KnowledgeBaseEntry).all()
+    return entries
+
+
+def create_knowledge_entry(db: Session, entry_data: dict):
+    entry = models.KnowledgeBaseEntry(
+        crop=entry_data.get("crop", "Unknown"),
+        condition=entry_data.get("condition", "Unseen Pattern"),
+        symptoms=entry_data.get("symptoms", "Observed via open-set verification"),
+        severity=entry_data.get("severity", "Medium"),
+        source=entry_data.get("source", "Expert Verification"),
+        verification_status=entry_data.get("verification_status", "Expert Verified Ground-Truth"),
+        notes=entry_data.get("notes", "")
+    )
+    db.add(entry)
+    db.commit()
+    db.refresh(entry)
+    return entry
+

@@ -257,3 +257,20 @@ body {
 .data-table tr:last-child td {
   border-bottom: none;
 }
+
+/* 3D Digital Twin Helpers */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@media (max-width: 1024px) {
+  .digital-twin-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+

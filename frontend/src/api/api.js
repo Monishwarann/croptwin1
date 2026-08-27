@@ -77,3 +77,20 @@ export async function fetchReportsData() {
   return await safeFetchJson(`${API_BASE}/reports`);
 }
 
+export async function fetchKnowledgeBase() {
+  return await safeFetchJson(`${API_BASE}/knowledge-base`);
+}
+
+export async function addKnowledgeEntry(entryData) {
+  return await safeFetchJson(`${API_BASE}/knowledge-base`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(entryData)
+  });
+}
+
+export async function fetchEnvironmentalForecast(params) {
+  const query = new URLSearchParams(params).toString();
+  return await safeFetchJson(`${API_BASE}/forecast?${query}`);
+}
+

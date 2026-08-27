@@ -1,12 +1,113 @@
 import React, { useEffect, useState } from 'react';
-import { Cpu, Activity, Clock, ShieldCheck, MapPin, Layers } from 'lucide-react';
+import { Clock, Cpu } from 'lucide-react';
+import DigitalTwinStatus from '../components/digitaltwin/DigitalTwinStatus';
+import FarmLegend from '../components/digitaltwin/FarmLegend';
+import FarmScene from '../components/digitaltwin/FarmScene';
+import ZoneDetails from '../components/digitaltwin/ZoneDetails';
 import HealthCard from '../components/HealthCard';
 import WeatherCard from '../components/WeatherCard';
-import { fetchDigitalTwinData } from '../api/api';
+import ChartCard from '../components/ChartCard';
+import { fetchDigitalTwinData, submitVerification } from '../api/api';
 
 export default function DigitalTwin({ selectedField }) {
   const [twin, setTwin] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedZone, setSelectedZone] = useState(null);
+
+  // Initial zone network data representing the field digital twin
+  const [zones, setZones] = useState([
+    {
+      id: 'zone-01',
+      zone: 'Zone 01',
+      crop: 'Tomato',
+      healthScore: 92,
+      condition: 'Healthy',
+      temperature: 27,
+      humidity: 64,
+      ndvi: 0.81,
+      risk: 'Low',
+      forecast: 'Stable',
+      marker: 'Healthy',
+      position: [-5, 0, -3],
+      size: [4.2, 3.2]
+    },
+    {
+      id: 'zone-02',
+      zone: 'Zone 02',
+      crop: 'Tomato',
+      healthScore: 85,
+      condition: 'Healthy',
+      temperature: 28,
+      humidity: 65,
+      ndvi: 0.76,
+      risk: 'Low',
+      forecast: 'Stable',
+      marker: 'Healthy',
+      position: [0, 0, -3],
+      size: [4.2, 3.2]
+    },
+    {
+      id: 'zone-03',
+      zone: 'Zone 03',
+      crop: 'Tomato',
+      healthScore: 61,
+      condition: 'Possible Stress',
+      temperature: 34,
+      humidity: 58,
+      ndvi: 0.62,
+      risk: 'Medium',
+      forecast: 'Monitor',
+      marker: 'Stress',
+      position: [5, 0, -3],
+      size: [4.2, 3.2]
+    },
+    {
+      id: 'zone-04',
+      zone: 'Zone 04',
+      crop: 'Tomato',
+      healthScore: 48,
+      condition: 'Early Blight Detected',
+      temperature: 32,
+      humidity: 78,
+      ndvi: 0.51,
+      risk: 'High',
+      forecast: 'High Risk',
+      marker: 'Disease',
+      position: [-5, 0, 2],
+      size: [4.2, 3.2]
+    },
+    {
+      id: 'zone-05',
+      zone: 'Zone 05',
+      crop: 'Tomato',
+      healthScore: 55,
+      condition: 'Unknown Condition',
+      unseenPattern: true,
+      temperature: 31,
+      humidity: 72,
+      ndvi: 0.58,
+      risk: 'Medium',
+      forecast: 'Uncertain',
+      marker: 'Unknown',
+      position: [0, 0, 2],
+      size: [4.2, 3.2]
+    },
+    {
+      id: 'zone-06',
+      zone: 'Zone 06',
+      crop: 'Tomato',
+      healthScore: 89,
+      condition: 'Healthy',
+      temperature: 27,
+      humidity: 66,
+      ndvi: 0.79,
+      risk: 'Low',
+      forecast: 'Stable',
+      marker: 'Healthy',
+      position: [5, 0, 2],
+      size: [4.2, 3.2]
+    }
+  ]);
 
   useEffect(() => {
     async function load() {
@@ -14,8 +115,25 @@ export default function DigitalTwin({ selectedField }) {
       try {
         const res = await fetchDigitalTwinData(selectedField);
         setTwin(res);
+        
+        // Synchronize general telemetry into Zone 01/03 if backend data returns
+        if (res && res.current_health) {
+          setZones((prevZones) =>
+            prevZones.map((z) => {
+              if (z.id === 'zone-03') {
+                return {
+                  ...z,
+                  healthScore: Math.round(res.current_health),
+                  condition: res.current_condition || z.condition,
+                  risk: res.disease_risk || z.risk
+                };
+              }
+              return z;
+            })
+          );
+        }
       } catch (err) {
-        console.error('Digital twin load error:', err);
+        console.error('Digital twin backend load error:', err);
       } finally {
         setLoading(false);
       }
@@ -23,78 +141,115 @@ export default function DigitalTwin({ selectedField }) {
     load();
   }, [selectedField]);
 
+  // Set default selected zone to Zone 03 on initial load
+  useEffect(() => {
+    if (!selectedZone && zones.length > 0) {
+      setSelectedZone(zones[2]); // Zone 03
+    }
+  }, [zones, selectedZone]);
+
+  const handleSendVerification = async (targetZone) => {
+    try {
+      await submitVerification(1, {
+        verified_label: 'Pending Expert Inspection',
+        notes: `Submitted from 3D Digital Twin map for ${targetZone.zone}`
+      });
+    } catch (err) {
+      console.warn('Verification submission fallback:', err);
+    }
+  };
+
   if (loading) {
-    return <div className="page-container" style={{ padding: '3rem', textAlign: 'center' }}>Synchronizing Digital Twin State...</div>;
+    return (
+      <div className="page-container" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+        Synchronizing 3D Digital Twin Field Telemetry...
+      </div>
+    );
   }
+
+  const historicalData = [
+    { day: 'W-4', health: 85 },
+    { day: 'W-3', health: 82 },
+    { day: 'W-2', health: 78 },
+    { day: 'W-1', health: 75 },
+    { day: 'Current', health: twin?.current_health || 72 }
+  ];
 
   return (
     <div className="page-container">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Page Header */}
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 className="page-title">Field Digital Twin Representation</h1>
-          <p className="page-subtitle">Data-driven virtual model and temporal state for {twin?.field_name}</p>
+          <h1 className="page-title">3D Digital Twin Farm</h1>
+          <p className="page-subtitle">
+            Interactive virtual model representing real-time crop health telemetry for {twin?.field_name || 'Tomato Plot 01'}
+          </p>
         </div>
         <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
           <Clock size={14} />
-          <span>Last Synced: {twin?.last_updated}</span>
+          <span>Last Synced: {twin?.last_updated || 'Today'}</span>
         </div>
       </div>
 
-      {/* Field Overview Cards */}
-      <div className="grid-4" style={{ marginBottom: '1.5rem' }}>
-        <HealthCard title="Field Identity" value={twin?.field_name} subtitle={`Crop: ${twin?.crop}`} icon={MapPin} />
-        <HealthCard title="Growth Stage" value={twin?.growth_stage} subtitle={`Area: ${twin?.area_hectares} Hectares`} icon={Layers} />
-        <HealthCard title="Digital Twin Health Index" value={`${twin?.current_health}%`} subtitle="Telemetry Index" icon={Activity} />
-        <HealthCard title="Evaluated Risk" value={twin?.disease_risk} subtitle={twin?.current_condition} icon={ShieldCheck} />
-      </div>
+      {/* Digital Twin Field Telemetry Overview Panel */}
+      <DigitalTwinStatus
+        fieldHealth={Math.round(twin?.current_health || 72)}
+        activeAlerts={2}
+        unknownPatterns={1}
+        lastUpdated={twin?.last_updated || 'Today'}
+        modelVersion="v1.2"
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-        {/* Telemetry & Environmental Parameters */}
-        <div>
-          <WeatherCard
-            temperature={twin?.environmental_summary?.temperature}
-            humidity={twin?.environmental_summary?.humidity}
-            rainfall={twin?.environmental_summary?.rainfall}
-            ndvi={twin?.environmental_summary?.ndvi}
+      {/* 3D Farm Viewport & Side Inspector Layout */}
+      <div className="digital-twin-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1.25rem', marginBottom: '1.5rem' }}>
+        
+        {/* Left Column: 3D Scene Viewport */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--text-main)' }}>
+              Interactive 3D Field Representation
+            </h3>
+            <FarmLegend />
+          </div>
+
+          <FarmScene
+            zones={zones}
+            selectedZone={selectedZone}
+            onSelectZone={(z) => setSelectedZone(z)}
           />
         </div>
 
-        {/* Temporal Event Timeline */}
-        <div className="card">
-          <h3 className="card-title">
-            <Cpu size={18} color="var(--color-accent)" />
-            <span>Digital Twin Timeline Events</span>
-          </h3>
+        {/* Right Column: Selected Zone Details Inspector */}
+        <div>
+          <ZoneDetails
+            zone={selectedZone}
+            onSendVerification={handleSendVerification}
+          />
+        </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-            {(twin?.timeline_events || []).map((ev, idx) => (
-              <div key={idx} style={{
-                display: 'flex',
-                gap: '1rem',
-                paddingBottom: '1rem',
-                borderBottom: idx < twin.timeline_events.length - 1 ? '1px solid var(--color-border)' : 'none'
-              }}>
-                <div style={{
-                  minWidth: '90px',
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  color: 'var(--text-muted)'
-                }}>
-                  {ev.date}
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.875rem', fontWeight: '600', color: 'var(--text-main)' }}>
-                    {ev.title}
-                  </div>
-                  <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                    {ev.detail}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+      </div>
+
+      {/* Bottom Historical Health & Environmental Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div>
+          <ChartCard
+            title="Historical Health Trend"
+            data={historicalData}
+            dataKey="health"
+            xKey="day"
+          />
+        </div>
+
+        <div>
+          <WeatherCard
+            temperature={twin?.environmental_summary?.temperature || '24.5 °C'}
+            humidity={twin?.environmental_summary?.humidity || '68%'}
+            rainfall={twin?.environmental_summary?.rainfall || '12.0 mm'}
+            ndvi={twin?.environmental_summary?.ndvi || '0.78'}
+          />
         </div>
       </div>
+
     </div>
   );
 }

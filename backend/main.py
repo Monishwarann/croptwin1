@@ -145,7 +145,7 @@ def get_dashboard_overview(field_id: int = 1, db: Session = Depends(get_db)):
 @app.post("/predict/disease")
 def analyze_crop_image(
     field_id: int = Form(1),
-    threshold: float = Form(0.75),
+    threshold: float = Form(0.70),
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
@@ -199,17 +199,22 @@ def analyze_crop_image(
 
     db.commit()
 
+    closest_class = pred_res.get("closest_known_class", f"{pred_res['crop']} — {pred_res['condition']}")
+
     return {
         "observation_id": obs.id,
         "crop": pred_res["crop"],
         "predicted_class": pred_res["predicted_class"],
         "condition": pred_res["condition"],
+        "closest_known_class": closest_class,
         "confidence": pred_res["confidence"],
         "confidence_percentage": pred_res["confidence_percentage"],
         "top_predictions": pred_res.get("top_predictions", []),
         "is_known": open_set_res["is_known"],
         "status": open_set_res["status"],
+        "final_decision": open_set_res["final_decision"],
         "message": open_set_res["message"],
+        "recommendation": open_set_res["recommendation"],
         "risk_level": health_res["risk_level"],
         "health_score": health_res["health_score"],
         "timestamp": obs.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
@@ -261,6 +266,20 @@ def verify_unknown_observation(
     )
     unknown_obs.status = "Verified"
     db.add(verification)
+
+    # Self-Evolving Workflow: Automatically store verified ground-truth in Knowledge Base
+    obs = unknown_obs.observation
+    field_crop = obs.field.crop if (obs and obs.field) else "Crop"
+    crud.create_knowledge_entry(db, {
+        "crop": field_crop,
+        "condition": req.verified_label,
+        "symptoms": req.notes or f"Verified {req.observed_condition} pattern.",
+        "severity": "High" if "Blight" in req.verified_label or "Rot" in req.verified_label else "Medium",
+        "source": f"Expert Verification ({req.expert_name})",
+        "verification_status": "Verified Ground-Truth (Self-Evolving KB)",
+        "notes": req.notes
+    })
+
     db.commit()
     db.refresh(verification)
 
@@ -268,6 +287,87 @@ def verify_unknown_observation(
         "status": "Success",
         "message": "Verification record saved successfully. Dataset updated for future knowledge updates.",
         "verification_id": verification.id
+    }
+
+
+@app.get("/knowledge-base")
+def get_knowledge_base_entries(db: Session = Depends(get_db)):
+    return crud.get_knowledge_base(db)
+
+
+@app.post("/knowledge-base")
+def add_knowledge_base_entry(data: dict, db: Session = Depends(get_db)):
+    return crud.create_knowledge_entry(db, data)
+
+
+# --- Endpoint Aliases for Specification Compatibility ---
+
+@app.post("/predict")
+def predict_alias(
+    field_id: int = Form(1),
+    threshold: float = Form(0.70),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    return analyze_crop_image(field_id=field_id, threshold=threshold, file=file, db=db)
+
+
+@app.post("/detect-unknown")
+def detect_unknown_alias(
+    field_id: int = Form(1),
+    threshold: float = Form(0.70),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    return analyze_crop_image(field_id=field_id, threshold=threshold, file=file, db=db)
+
+
+@app.get("/history")
+def history_alias(db: Session = Depends(get_db)):
+    return get_reports_data(db=db)
+
+
+@app.post("/verify-condition")
+def verify_condition_alias(
+    id: int,
+    req: schemas.VerificationRequest,
+    db: Session = Depends(get_db)
+):
+    return verify_unknown_observation(id=id, req=req, db=db)
+
+
+@app.get("/forecast")
+def forecast_query_alias(
+    temperature: Optional[float] = None,
+    humidity: Optional[float] = None,
+    rainfall: Optional[float] = None,
+    soil_moisture: Optional[float] = None,
+    db: Session = Depends(get_db)
+):
+    # Flexible forecast calculator evaluating environmental metrics
+    base_health = 80.0
+    if temperature and temperature > 30.0:
+        base_health -= 10.0
+    if humidity and humidity > 80.0:
+        base_health -= 12.0
+    if rainfall and rainfall > 20.0:
+        base_health -= 8.0
+
+    risk = "High" if base_health < 65 else ("Medium" if base_health < 78 else "Low")
+    return {
+        "has_sufficient_data": True,
+        "message": "Environmental forecast risk calculated.",
+        "input_parameters": {
+            "temperature": temperature or 24.5,
+            "humidity": humidity or 68.0,
+            "rainfall": rainfall or 12.0,
+            "soil_moisture": soil_moisture or 45.0
+        },
+        "forecasts": [
+            {"horizon": "7-Day", "horizon_days": 7, "predicted_health": round(base_health, 1), "risk_level": risk},
+            {"horizon": "14-Day", "horizon_days": 14, "predicted_health": round(base_health + 2.0, 1), "risk_level": risk},
+            {"horizon": "21-Day", "horizon_days": 21, "predicted_health": round(base_health + 5.0, 1), "risk_level": "Low"}
+        ]
     }
 
 

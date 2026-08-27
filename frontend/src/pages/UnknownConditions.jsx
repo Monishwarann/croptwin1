@@ -8,8 +8,10 @@ export default function UnknownConditions() {
   const [loading, setLoading] = useState(true);
 
   // Form fields
-  const [observedCondition, setObservedCondition] = useState('Disease');
-  const [verifiedLabel, setVerifiedLabel] = useState('');
+  const [cropName, setCropName] = useState('Tomato');
+  const [conditionName, setConditionName] = useState('');
+  const [symptoms, setSymptoms] = useState('');
+  const [severity, setSeverity] = useState('High');
   const [notes, setNotes] = useState('');
   const [expertName, setExpertName] = useState('Dr. Agronomist');
   const [saving, setSaving] = useState(false);
@@ -36,19 +38,20 @@ export default function UnknownConditions() {
 
   const handleVerificationSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedAlert || !verifiedLabel) return;
+    if (!selectedAlert || !conditionName) return;
 
     setSaving(true);
     setSuccessMsg('');
     try {
       await submitVerification(selectedAlert.id, {
-        observed_condition: observedCondition,
-        verified_label: verifiedLabel,
-        notes: notes,
+        observed_condition: `${cropName} — ${conditionName}`,
+        verified_label: `${cropName} — ${conditionName}`,
+        notes: `Symptoms: ${symptoms} | Severity: ${severity} | Notes: ${notes}`,
         expert_name: expertName
       });
-      setSuccessMsg('Expert verification successfully recorded in knowledge base.');
-      setVerifiedLabel('');
+      setSuccessMsg('Verified & successfully added to Knowledge Base.');
+      setConditionName('');
+      setSymptoms('');
       setNotes('');
       loadAlerts();
     } catch (err) {
@@ -141,47 +144,67 @@ export default function UnknownConditions() {
 
               <form onSubmit={handleVerificationSubmit}>
                 <div className="form-group">
-                  <label className="form-label">Observed Condition Category</label>
-                  <select
-                    className="form-select"
-                    value={observedCondition}
-                    onChange={(e) => setObservedCondition(e.target.value)}
-                  >
-                    <option value="Disease">Disease</option>
-                    <option value="Environmental Stress">Environmental Stress</option>
-                    <option value="Water Stress">Water Stress</option>
-                    <option value="Nutrient Stress">Nutrient Stress</option>
-                    <option value="Pest Damage">Pest Damage</option>
-                    <option value="Healthy">Healthy</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Verified Label / Diagnosis Name</label>
+                  <label className="form-label">Crop Name</label>
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="e.g. Tomato Late Blight / Nitrogen Deficiency"
-                    value={verifiedLabel}
-                    onChange={(e) => setVerifiedLabel(e.target.value)}
+                    placeholder="e.g. Tomato, Cherry, Potato"
+                    value={cropName}
+                    onChange={(e) => setCropName(e.target.value)}
                     required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Expert Notes & Ground Truth Justification</label>
+                  <label className="form-label">Condition Name</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. Early Blight, Powdery Mildew, Nutrient Deficiency"
+                    value={conditionName}
+                    onChange={(e) => setConditionName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Symptoms</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. Dark concentric leaf spots, yellowing margins"
+                    value={symptoms}
+                    onChange={(e) => setSymptoms(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Severity</label>
+                  <select
+                    className="form-select"
+                    value={severity}
+                    onChange={(e) => setSeverity(e.target.value)}
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Critical">Critical</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Notes</label>
                   <textarea
                     className="form-textarea"
                     rows={3}
-                    placeholder="Provide detailed morphological observation notes..."
+                    placeholder="Provide additional agronomic field notes..."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Expert Verifier Name</label>
+                  <label className="form-label">Expert Verifier</label>
                   <input
                     type="text"
                     className="form-input"
@@ -193,10 +216,10 @@ export default function UnknownConditions() {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={saving || !verifiedLabel}
+                  disabled={saving || !conditionName}
                   style={{ width: '100%', marginTop: '0.5rem' }}
                 >
-                  {saving ? 'Saving Verification...' : 'Save Verification'}
+                  {saving ? 'Saving...' : 'Verify & Add to Knowledge Base'}
                 </button>
               </form>
             </div>

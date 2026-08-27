@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Stethoscope, AlertTriangle, TrendingUp, Cpu, FileText, Sprout, User } from 'lucide-react';
+import { LayoutDashboard, Stethoscope, AlertTriangle, TrendingUp, Cpu, BookOpen, FileText, Sprout, User } from 'lucide-react';
 
 export default function Sidebar() {
   const navItems = [
@@ -9,8 +9,9 @@ export default function Sidebar() {
     { name: 'Unknown Conditions', path: '/unknowns', icon: AlertTriangle },
     { name: 'Forecast', path: '/forecast', icon: TrendingUp },
     { name: 'Digital Twin', path: '/digital-twin', icon: Cpu },
+    { name: 'Knowledge Base', path: '/knowledge-base', icon: BookOpen },
     { name: 'Reports', path: '/reports', icon: FileText },
-    { name: 'Profile & Settings', path: '/profile', icon: User },
+    { name: 'Settings', path: '/profile', icon: User },
   ];
 
   return (
