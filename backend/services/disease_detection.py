@@ -4,13 +4,16 @@ Loads trained PyTorch EfficientNet-B0 model (best_efficientnet_crop_disease.pth)
 to perform real-time disease diagnosis across 38 PlantVillage crop classes.
 """
 
-import os
-import io
-import torch
-import torch.nn as nn
-from PIL import Image
-import torchvision.models as models
-import torchvision.transforms as transforms
+try:
+    import torch
+    import torch.nn as nn
+    from PIL import Image
+    import torchvision.models as models
+    import torchvision.transforms as transforms
+    HAS_TORCH = True
+except Exception as e:
+    print(f"[CropNexia] PyTorch import notice: {e}. Running in lightweight fallback mode.")
+    HAS_TORCH = False
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR, "best_efficientnet_crop_disease.pth")
@@ -69,18 +72,22 @@ _model = None
 _device = None
 
 
-def get_device() -> torch.device:
+def get_device():
     global _device
+    if not HAS_TORCH:
+        return "cpu"
     if _device is None:
         _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     return _device
 
 
-def get_model() -> nn.Module:
+def get_model():
     """
     Cached singleton loader for the PyTorch EfficientNet-B0 model.
     """
     global _model
+    if not HAS_TORCH:
+        return None
     if _model is None:
         device = get_device()
         print(f"[CropNexia] Initializing EfficientNet-B0 model on device: {device}...")
@@ -130,7 +137,13 @@ def predict_disease(image_bytes: bytes, filename: str = "", top_k_num: int = 5) 
       - top_predictions: list of top classes with confidence scores
     """
     try:
+        if not HAS_TORCH:
+            return mock_predict(image_bytes, filename)
+            
         model = get_model()
+        if model is None:
+            return mock_predict(image_bytes, filename)
+            
         device = get_device()
 
         # Load and convert image to RGB
