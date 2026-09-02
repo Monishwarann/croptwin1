@@ -4,6 +4,9 @@ Loads trained PyTorch EfficientNet-B0 model (best_efficientnet_crop_disease.pth)
 to perform real-time disease diagnosis across 38 PlantVillage crop classes.
 """
 
+import os
+import io
+
 try:
     import torch
     import torch.nn as nn
