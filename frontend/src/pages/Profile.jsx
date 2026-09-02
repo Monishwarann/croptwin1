@@ -3,7 +3,7 @@ import { User, Mail, Shield, MapPin, Save, CheckCircle2, Sliders, Bell, Globe, C
 
 export default function Profile({ user, onUpdateUser, selectedField, onSelectField }) {
   const [name, setName] = useState(user?.username || 'Researcher User');
-  const [email, setEmail] = useState(user?.email || 'researcher@croptwin.org');
+  const [email, setEmail] = useState(user?.email || 'researcher@CropNexia.org');
   const [role, setRole] = useState(user?.role || 'Lead Agronomist & AI Researcher');
   const [station, setStation] = useState(user?.station || 'North Field Research Station');
   const [phone, setPhone] = useState(user?.phone || '+1 (555) 234-5678');

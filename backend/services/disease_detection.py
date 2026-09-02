@@ -83,7 +83,7 @@ def get_model() -> nn.Module:
     global _model
     if _model is None:
         device = get_device()
-        print(f"[CropTwin] Initializing EfficientNet-B0 model on device: {device}...")
+        print(f"[CropNexia] Initializing EfficientNet-B0 model on device: {device}...")
         model = models.efficientnet_b0(weights=None)
         in_features = model.classifier[1].in_features
         model.classifier[1] = nn.Linear(in_features, len(PLANT_CLASSES))
@@ -99,7 +99,7 @@ def get_model() -> nn.Module:
             model.to(device)
             model.eval()
             _model = model
-            print(f"[CropTwin] Model loaded successfully from {MODEL_PATH} ({len(PLANT_CLASSES)} classes)")
+            print(f"[CropNexia] Model loaded successfully from {MODEL_PATH} ({len(PLANT_CLASSES)} classes)")
         else:
             raise FileNotFoundError(f"Model file not found at {MODEL_PATH}")
     return _model
@@ -191,7 +191,7 @@ def predict_disease(image_bytes: bytes, filename: str = "", top_k_num: int = 5) 
         }
 
     except Exception as e:
-        print(f"[CropTwin] Deep learning inference error: {e}. Executing fallback...")
+        print(f"[CropNexia] Deep learning inference error: {e}. Executing fallback...")
         return mock_predict(image_bytes, filename)
 
 

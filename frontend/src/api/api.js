@@ -1,4 +1,4 @@
-// API integration layer for CropTwin FastAPI backend
+// API integration layer for CropNexia FastAPI backend
 
 const API_BASE = '/api';
 

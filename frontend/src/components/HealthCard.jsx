@@ -9,14 +9,19 @@ export default function HealthCard({ title, value, subtitle, icon: Icon, badgeTe
           <div style={{
             width: '32px',
             height: '32px',
-            borderRadius: '6px',
-            backgroundColor: '#f1f5f9',
+            borderRadius: '50%',
+            backgroundColor: '#000000',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--color-accent)'
+            overflow: 'hidden',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
           }}>
-            <Icon size={18} />
+            {typeof Icon === 'string' || Icon.name === 'Sprout' ? (
+              <img src="/favicon.svg" alt="CropNexia Icon" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            ) : (
+              <Icon size={18} color="#ffffff" />
+            )}
           </div>
         )}
       </div>

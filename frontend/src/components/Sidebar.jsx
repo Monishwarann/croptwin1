@@ -35,17 +35,18 @@ export default function Sidebar() {
         <div style={{
           width: '36px',
           height: '36px',
-          borderRadius: '8px',
-          backgroundColor: 'var(--color-accent)',
+          borderRadius: '50%',
+          backgroundColor: '#000000',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#ffffff'
+          overflow: 'hidden',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.4)'
         }}>
-          <Sprout size={22} />
+          <img src="/favicon.svg" alt="CropNexia Logo" style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: '50%' }} />
         </div>
         <div>
-          <h1 style={{ fontSize: '1.125rem', fontWeight: '700', letterSpacing: '-0.02em', color: '#ffffff' }}>CropTwin</h1>
+          <h1 style={{ fontSize: '1.125rem', fontWeight: '700', letterSpacing: '-0.02em', color: '#ffffff' }}>CropNexia</h1>
           <p style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Digital Twin</p>
         </div>
       </div>

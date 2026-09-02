@@ -73,7 +73,7 @@ export default function Reports() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `croptwin_report_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `CropNexia_report_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -85,7 +85,7 @@ export default function Reports() {
     printWindow.document.write(`
       <html>
         <head>
-          <title>CropTwin Inspection Report #${selectedReport.id}</title>
+          <title>CropNexia Inspection Report #${selectedReport.id}</title>
           <style>
             body { font-family: system-ui, sans-serif; padding: 2rem; color: #1e293b; }
             h1 { color: #15803d; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
@@ -95,7 +95,13 @@ export default function Reports() {
           </style>
         </head>
         <body>
-          <h1>CropTwin — Leaf Inspection Report #${selectedReport.id}</h1>
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem;">
+            <img src="/favicon.svg" alt="CropNexia Logo" style="height: 54px; width: 54px; background: #000; border-radius: 50%; object-fit: cover;" />
+            <div>
+              <h1 style="margin: 0; color: #15803d; border-bottom: none; padding-bottom: 0;">CropNexia Leaf Inspection Report #${selectedReport.id}</h1>
+              <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.85rem;">Smart Farming. Healthier Future. — AI Digital Twin</p>
+            </div>
+          </div>
           <div class="meta">
             <div><strong>Date & Time:</strong> ${selectedReport.date}</div>
             <div><strong>Field Plot:</strong> ${selectedReport.field} (${selectedReport.crop})</div>
@@ -105,7 +111,7 @@ export default function Reports() {
             <div><strong>Health Index:</strong> ${selectedReport.health_score}%</div>
             <div><strong>Verification:</strong> ${selectedReport.verification_status}</div>
           </div>
-          <p>Generated via CropTwin Agricultural AI Digital Twin Monitoring System.</p>
+          <p>Generated via CropNexia Agricultural AI Digital Twin Monitoring System.</p>
         </body>
       </html>
     `);

@@ -1,6 +1,6 @@
-# CropTwin — Self-Evolving AI Digital Twin Platform
+# CropNexia — Self-Evolving AI Digital Twin Platform
 
-CropTwin is a full-stack agricultural monitoring and AI decision-support platform combining PyTorch deep-learning crop disease identification (EfficientNet-B0), open-set unseen pattern discovery, expert knowledge verification, Firebase authentication, environmental telemetry, health forecasting, and an **interactive 3D Digital Twin Farm**.
+CropNexia is a full-stack agricultural monitoring and AI decision-support platform combining PyTorch deep-learning crop disease identification (EfficientNet-B0), open-set unseen pattern discovery, expert knowledge verification, Firebase authentication, environmental telemetry, health forecasting, and an **interactive 3D Digital Twin Farm**.
 
 ---
 
@@ -25,7 +25,7 @@ CropTwin is a full-stack agricultural monitoring and AI decision-support platfor
 ## 📁 Repository Structure
 
 ```
-CropTwin/
+CropNexia/
 ├── backend/
 │   ├── main.py                     # FastAPI application endpoints
 │   ├── requirements.txt            # Python backend dependencies (FastAPI, PyTorch, SQLAlchemy, Pydantic)

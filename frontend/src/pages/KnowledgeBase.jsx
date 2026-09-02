@@ -51,8 +51,8 @@ export default function KnowledgeBase() {
 
       {/* Self-Evolving Workflow Banner */}
       <div className="card" style={{ marginBottom: '1.5rem', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-        <h3 className="card-title" style={{ color: '#166534', marginBottom: '0.75rem' }}>
-          <Cpu size={20} color="var(--color-accent)" />
+        <h3 className="card-title" style={{ color: '#166534', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <img src="/favicon.svg" alt="CropNexia Icon" style={{ width: '24px', height: '24px', borderRadius: '50%', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', objectFit: 'cover' }} />
           <span>Self-Evolving AI Model Pipeline</span>
         </h3>
         <p style={{ fontSize: '0.8125rem', color: '#15803d', marginBottom: '1rem', lineHeight: '1.5' }}>

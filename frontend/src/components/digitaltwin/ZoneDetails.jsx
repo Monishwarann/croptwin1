@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Sprout, Activity, Thermometer, Droplets, Sun, AlertTriangle, 
+import {
+  Sprout, Activity, Thermometer, Droplets, Sun, AlertTriangle,
   CheckCircle2, AlertCircle, HelpCircle, ArrowRight, Send, Eye, RefreshCw
 } from 'lucide-react';
 
@@ -17,7 +17,11 @@ export default function ZoneDetails({ zone, onSendVerification }) {
   if (!zone) {
     return (
       <div className="card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-        <Sprout size={32} color="var(--color-accent)" style={{ marginBottom: '0.75rem', opacity: 0.6 }} />
+        <img
+          src="/favicon.svg"
+          alt="CropNexia Icon"
+          style={{ width: '48px', height: '48px', borderRadius: '50%', marginBottom: '0.75rem', boxShadow: '0 4px 12px rgba(0,0,0,0.25)', display: 'inline-block', objectFit: 'cover' }}
+        />
         <h4 style={{ color: 'var(--text-main)', marginBottom: '0.5rem' }}>No Zone Selected</h4>
         <p style={{ fontSize: '0.875rem' }}>Click any crop zone on the 3D Digital Twin Farm to inspect telemetry, health metrics, and AI disease diagnostic states.</p>
       </div>
@@ -55,7 +59,7 @@ export default function ZoneDetails({ zone, onSendVerification }) {
 
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      
+
       {/* Header Title & Status */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
@@ -149,7 +153,7 @@ export default function ZoneDetails({ zone, onSendVerification }) {
         <div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Crop Type</div>
           <div style={{ fontSize: '0.9375rem', fontWeight: '700', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <Sprout size={15} color="var(--color-accent)" />
+            <img src="/favicon.png" alt="CropNexia Icon" style={{ width: '16px', height: '16px', borderRadius: '4px' }} />
             {zone.crop}
           </div>
         </div>
@@ -202,7 +206,7 @@ export default function ZoneDetails({ zone, onSendVerification }) {
         border: '1px dashed var(--color-border)'
       }}>
         <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-          CropTwin AI Architecture Workflow
+          CropNexia AI Architecture Workflow
         </div>
         <div style={{
           display: 'flex',

@@ -17,11 +17,26 @@ export default function Header({ user, selectedField, onSelectField, onLogout })
     }}>
       {/* Title & Field Selector */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }}>
-        <div>
-          <span style={{ fontSize: '1.125rem', fontWeight: '700', color: 'var(--color-accent)', letterSpacing: '-0.02em' }}>CropTwin</span>
-          <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginLeft: '0.75rem', borderLeft: '1px solid #cbd5e1', paddingLeft: '0.75rem' }}>
-            AI-powered Crop Health Monitoring
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            backgroundColor: '#000000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.25)'
+          }}>
+            <img src="/favicon.svg" alt="CropNexia Logo" style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+          </div>
+          <div>
+            <span style={{ fontSize: '1.125rem', fontWeight: '700', color: 'var(--color-accent)', letterSpacing: '-0.02em' }}>CropNexia</span>
+            <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginLeft: '0.75rem', borderLeft: '1px solid #cbd5e1', paddingLeft: '0.75rem' }}>
+              AI-powered Crop Health Monitoring
+            </span>
+          </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

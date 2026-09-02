@@ -19,7 +19,7 @@ from services.forecasting import generate_health_forecast
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="CropTwin API",
+    title="CropNexia API",
     description="Self-Evolving AI Digital Twin for Crop Health Monitoring & Forecasting",
     version="1.0.0"
 )
@@ -47,9 +47,9 @@ def startup_event():
     """
     try:
         get_model()
-        print("[CropTwin] Backend ready with PyTorch model.")
+        print("[CropNexia] Backend ready with PyTorch model.")
     except Exception as e:
-        print(f"[CropTwin] Warning during model initialization: {e}")
+        print(f"[CropNexia] Warning during model initialization: {e}")
 
 
 @app.get("/")
