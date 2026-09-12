@@ -43,7 +43,7 @@ export default function Sidebar() {
           overflow: 'hidden',
           boxShadow: '0 2px 6px rgba(0,0,0,0.4)'
         }}>
-          <img src="/favicon.svg" alt="CropNexia Logo" style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+          <img src="/logo.png" alt="CropNexia Logo" style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: '50%' }} />
         </div>
         <div>
           <h1 style={{ fontSize: '1.125rem', fontWeight: '700', letterSpacing: '-0.02em', color: '#ffffff' }}>CropNexia</h1>

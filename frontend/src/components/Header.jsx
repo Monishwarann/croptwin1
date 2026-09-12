@@ -29,7 +29,7 @@ export default function Header({ user, selectedField, onSelectField, onLogout })
             overflow: 'hidden',
             boxShadow: '0 2px 6px rgba(0,0,0,0.25)'
           }}>
-            <img src="/favicon.svg" alt="CropNexia Logo" style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            <img src="/logo.png" alt="CropNexia Logo" style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: '50%' }} />
           </div>
           <div>
             <span style={{ fontSize: '1.125rem', fontWeight: '700', color: 'var(--color-accent)', letterSpacing: '-0.02em' }}>CropNexia</span>

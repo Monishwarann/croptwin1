@@ -129,7 +129,7 @@ export default function Login({ onLoginSuccess }) {
             overflow: 'hidden',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)'
           }}>
-            <img src="/favicon.svg" alt="CropNexia Logo" style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            <img src="/logo.png" alt="CropNexia Logo" style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: '50%' }} />
           </div>
           <h2 style={{ fontSize: '1.375rem', fontWeight: '700', color: 'var(--text-main)' }}>CropNexia AI Portal</h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
