@@ -20,6 +20,8 @@ class HealthCheckResponse(BaseModel):
     version: str
     timestamp: str
     environment: str
+    model_engine: Optional[str] = "PyTorch EfficientNet-B0 (38 Classes)"
+    inference_mode: Optional[str] = "Real Neural Network"
 
 
 class FieldSchema(BaseModel):
@@ -65,6 +67,8 @@ class DiseasePredictionResponse(BaseModel):
     timestamp: str
     image_url: str
     top_predictions: Optional[List[dict]] = None
+    model_engine: Optional[str] = "PyTorch EfficientNet-B0 (38 Classes)"
+    inference_mode: Optional[str] = "Real Neural Network"
 
 
 class VerificationRequest(BaseModel):

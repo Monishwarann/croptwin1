@@ -17,8 +17,8 @@ def evaluate_open_set(confidence: float, threshold: float = DEFAULT_THRESHOLD):
             "is_known": True,
             "status": "Known Condition",
             "final_decision": "KNOWN CONDITION",
-            "message": "Model matched trained crop-health condition with high confidence.",
-            "recommendation": "",
+            "message": f"Model matched trained crop condition with confidence (≥ {int(threshold * 100)}%).",
+            "recommendation": "Standard diagnostic workflow applied.",
             "threshold_used": threshold,
         }
     else:
@@ -26,8 +26,9 @@ def evaluate_open_set(confidence: float, threshold: float = DEFAULT_THRESHOLD):
             "is_known": False,
             "status": "Unseen Pattern Detected",
             "final_decision": "UNKNOWN CONDITION",
-            "message": "No reliable match found in the trained classes.",
-            "recommendation": "Expert verification recommended.",
+            "message": f"Model confidence ({confidence * 100:.1f}%) is below decision threshold ({int(threshold * 100)}%).",
+            "recommendation": "Flagged as unverified open-set observation. Expert verification recommended.",
             "threshold_used": threshold,
         }
+
 

@@ -63,7 +63,7 @@ export default function Dashboard({ selectedField }) {
         <HealthCard
           title="Field Health Score"
           value={`${data?.health_score || 72}%`}
-          subtitle="Composite Index"
+          subtitle="Overall Field (vs 95% Leaf Index)"
           icon={Activity}
           badgeText={data?.health_score >= 80 ? 'Healthy' : 'Moderate'}
           badgeType={data?.health_score >= 80 ? 'success' : 'warning'}

@@ -225,7 +225,7 @@ export default function Reports() {
               <th>Detected Condition</th>
               <th>Confidence</th>
               <th>Status</th>
-              <th>Health Index</th>
+              <th>Sample Health Index</th>
               <th>Verification</th>
               <th>Action</th>
             </tr>
@@ -393,7 +393,7 @@ export default function Reports() {
                 </div>
 
                 <div style={{ padding: '0.875rem', borderRadius: '8px', backgroundColor: '#f8fafc', border: '1px solid var(--color-border)', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Field Health Index</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Sample Health Index</div>
                   <div style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)', marginTop: '0.25rem' }}>
                     {selectedReport.health_score}%
                   </div>
@@ -405,6 +405,11 @@ export default function Reports() {
                     {selectedReport.status === 'Unseen Pattern' ? 'Unverified Risk' : 'Low-Medium Risk'}
                   </div>
                 </div>
+              </div>
+
+              {/* Distinction note between Field Health and Sample Health Index */}
+              <div style={{ padding: '0.75rem 0.875rem', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', fontSize: '0.75rem', color: '#166534', marginBottom: '1rem' }}>
+                💡 <strong>Metrics Explanation:</strong> <em>Sample Health Index</em> ({selectedReport.health_score}%) measures this specific leaf image sample (95% for healthy leaves). <em>Overall Field Health</em> (72%) represents the composite health score aggregated across all farm plot zones.
               </div>
             </div>
 

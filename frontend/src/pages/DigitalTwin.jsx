@@ -50,14 +50,14 @@ export default function DigitalTwin({ selectedField }) {
       id: 'zone-03',
       zone: 'Zone 03',
       crop: 'Tomato',
-      healthScore: 61,
+      healthScore: 72,
       condition: 'Possible Stress',
-      temperature: 34,
-      humidity: 58,
-      ndvi: 0.62,
+      temperature: 28.5,
+      humidity: 68,
+      ndvi: 0.74,
       risk: 'Medium',
       forecast: 'Monitor',
-      marker: 'Stress',
+      marker: 'Healthy',
       position: [5, 0, -3],
       size: [4.2, 3.2]
     },
@@ -116,8 +116,9 @@ export default function DigitalTwin({ selectedField }) {
         const res = await fetchDigitalTwinData(selectedField);
         setTwin(res);
         
-        // Synchronize general telemetry into Zone 01/03 if backend data returns
-        if (res && res.current_health) {
+        if (res && res.zones && res.zones.length > 0) {
+          setZones(res.zones);
+        } else if (res && res.current_health) {
           setZones((prevZones) =>
             prevZones.map((z) => {
               if (z.id === 'zone-03') {
@@ -141,12 +142,17 @@ export default function DigitalTwin({ selectedField }) {
     load();
   }, [selectedField]);
 
-  // Set default selected zone to Zone 03 on initial load
+  // Set default selected zone to Zone 03 on initial load and keep reference synced
   useEffect(() => {
-    if (!selectedZone && zones.length > 0) {
-      setSelectedZone(zones[2]); // Zone 03
+    if (zones.length > 0) {
+      if (!selectedZone) {
+        setSelectedZone(zones[2]); // Zone 03
+      } else {
+        const match = zones.find((z) => z.id === selectedZone.id);
+        if (match) setSelectedZone(match);
+      }
     }
-  }, [zones, selectedZone]);
+  }, [zones]);
 
   const handleSendVerification = async (targetZone) => {
     try {

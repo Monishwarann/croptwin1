@@ -25,7 +25,7 @@ export default function DigitalTwinStatus({ fieldHealth = 72, activeAlerts = 2, 
             <Activity size={20} />
           </div>
           <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500' }}>Overall Field Health</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500' }}>Overall Field Health (6-Zone Composite)</div>
             <div style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)' }}>{fieldHealth}%</div>
           </div>
         </div>

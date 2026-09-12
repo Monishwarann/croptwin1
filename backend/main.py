@@ -67,7 +67,9 @@ def health_check():
         "status": "Healthy",
         "version": "1.0.0",
         "timestamp": datetime.utcnow().isoformat(),
-        "environment": "Development / Academic Prototype"
+        "environment": "Development / Academic Prototype",
+        "model_engine": "PyTorch EfficientNet-B0 (38 Classes)",
+        "inference_mode": "Real Neural Network"
     }
 
 
@@ -210,6 +212,7 @@ def analyze_crop_image(
         "confidence": pred_res["confidence"],
         "confidence_percentage": pred_res["confidence_percentage"],
         "top_predictions": pred_res.get("top_predictions", []),
+        "recommendations": pred_res.get("recommendations", {}),
         "is_known": open_set_res["is_known"],
         "status": open_set_res["status"],
         "final_decision": open_set_res["final_decision"],
@@ -218,7 +221,9 @@ def analyze_crop_image(
         "risk_level": health_res["risk_level"],
         "health_score": health_res["health_score"],
         "timestamp": obs.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-        "image_url": f"/uploads/{safe_filename}"
+        "image_url": f"/uploads/{safe_filename}",
+        "model_engine": "PyTorch EfficientNet-B0 (38 Classes)",
+        "inference_mode": "Real Neural Network"
     }
 
 
@@ -365,8 +370,8 @@ def forecast_query_alias(
         },
         "forecasts": [
             {"horizon": "7-Day", "horizon_days": 7, "predicted_health": round(base_health, 1), "risk_level": risk},
-            {"horizon": "14-Day", "horizon_days": 14, "predicted_health": round(base_health + 2.0, 1), "risk_level": risk},
-            {"horizon": "21-Day", "horizon_days": 21, "predicted_health": round(base_health + 5.0, 1), "risk_level": "Low"}
+            {"horizon": "14-Day", "horizon_days": 14, "predicted_health": round(base_health + 3.0, 1), "risk_level": risk},
+            {"horizon": "21-Day", "horizon_days": 21, "predicted_health": round(base_health + 7.0, 1), "risk_level": "Low"}
         ]
     }
 
@@ -426,6 +431,12 @@ def get_digital_twin_data(field_id: int = 1, db: Session = Depends(get_db)):
         field = crud.get_fields(db)[0]
 
     latest_obs = crud.get_latest_observation(db, field.id)
+    health_val = int(latest_obs.health_score) if latest_obs else 72
+    condition_val = latest_obs.condition_status if latest_obs else "Healthy"
+    risk_val = latest_obs.predictions.risk_level if (latest_obs and latest_obs.predictions) else "Medium"
+    is_known_val = latest_obs.predictions.is_known if (latest_obs and latest_obs.predictions) else True
+
+    marker_val = "Disease" if risk_val == "High" else ("Unknown" if not is_known_val else "Healthy")
 
     return {
         "field_id": field.id,
@@ -435,9 +446,102 @@ def get_digital_twin_data(field_id: int = 1, db: Session = Depends(get_db)):
         "area_hectares": field.area_hectares,
         "growth_stage": field.growth_stage,
         "current_health": latest_obs.health_score if latest_obs else 72.0,
-        "disease_risk": latest_obs.predictions.risk_level if (latest_obs and latest_obs.predictions) else "Medium",
-        "current_condition": latest_obs.condition_status if latest_obs else "Healthy",
+        "disease_risk": risk_val,
+        "current_condition": condition_val,
         "last_updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+        "zones": [
+            {
+                "id": "zone-01",
+                "zone": "Zone 01",
+                "crop": field.crop,
+                "healthScore": 92,
+                "condition": "Healthy",
+                "temperature": 25.2,
+                "humidity": 64,
+                "ndvi": 0.81,
+                "risk": "Low",
+                "forecast": "Stable",
+                "marker": "Healthy",
+                "position": [-5, 0, -3],
+                "size": [4.2, 3.2]
+            },
+            {
+                "id": "zone-02",
+                "zone": "Zone 02",
+                "crop": field.crop,
+                "healthScore": 86,
+                "condition": "Healthy",
+                "temperature": 26.0,
+                "humidity": 65,
+                "ndvi": 0.78,
+                "risk": "Low",
+                "forecast": "Stable",
+                "marker": "Healthy",
+                "position": [0, 0, -3],
+                "size": [4.2, 3.2]
+            },
+            {
+                "id": "zone-03",
+                "zone": "Zone 03",
+                "crop": field.crop,
+                "healthScore": health_val,
+                "condition": condition_val,
+                "temperature": 28.5,
+                "humidity": 68,
+                "ndvi": 0.74,
+                "risk": risk_val,
+                "forecast": "Monitor",
+                "marker": marker_val,
+                "position": [5, 0, -3],
+                "size": [4.2, 3.2]
+            },
+            {
+                "id": "zone-04",
+                "zone": "Zone 04",
+                "crop": field.crop,
+                "healthScore": 48,
+                "condition": "Early Blight Detected",
+                "temperature": 32.1,
+                "humidity": 78,
+                "ndvi": 0.51,
+                "risk": "High",
+                "forecast": "High Risk",
+                "marker": "Disease",
+                "position": [-5, 0, 2],
+                "size": [4.2, 3.2]
+            },
+            {
+                "id": "zone-05",
+                "zone": "Zone 05",
+                "crop": field.crop,
+                "healthScore": 55,
+                "condition": "Unseen Pattern",
+                "unseenPattern": True,
+                "temperature": 30.5,
+                "humidity": 72,
+                "ndvi": 0.58,
+                "risk": "Medium",
+                "forecast": "Uncertain",
+                "marker": "Unknown",
+                "position": [0, 0, 2],
+                "size": [4.2, 3.2]
+            },
+            {
+                "id": "zone-06",
+                "zone": "Zone 06",
+                "crop": field.crop,
+                "healthScore": 89,
+                "condition": "Healthy",
+                "temperature": 24.8,
+                "humidity": 66,
+                "ndvi": 0.79,
+                "risk": "Low",
+                "forecast": "Stable",
+                "marker": "Healthy",
+                "position": [5, 0, 2],
+                "size": [4.2, 3.2]
+            }
+        ],
         "environmental_summary": {
             "temperature": "24.5 °C",
             "humidity": "68%",

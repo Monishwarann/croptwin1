@@ -39,10 +39,10 @@ export default function Forecast({ selectedField }) {
   };
 
   const chartData = [
-    { day: 'Today', health: forecastResult?.forecasts?.[0]?.predicted_health || 75 },
-    { day: '+7 Days', health: forecastResult?.forecasts?.[0]?.predicted_health || 75 },
+    { day: 'Today', health: 72 },
+    { day: '+7 Days', health: forecastResult?.forecasts?.[0]?.predicted_health || 74 },
     { day: '+14 Days', health: forecastResult?.forecasts?.[1]?.predicted_health || 77 },
-    { day: '+21 Days', health: forecastResult?.forecasts?.[2]?.predicted_health || 80 }
+    { day: '+21 Days', health: forecastResult?.forecasts?.[2]?.predicted_health || 81 }
   ];
 
   return (

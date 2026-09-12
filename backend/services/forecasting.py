@@ -21,8 +21,8 @@ def generate_health_forecast(history_records_count: int):
         "has_sufficient_data": True,
         "message": "Forecast generated using time-series baseline trend.",
         "forecasts": [
-            {"horizon_days": 7, "predicted_health_score": 75.0, "risk_level": "Medium"},
-            {"horizon_days": 14, "predicted_health_score": 78.0, "risk_level": "Medium"},
-            {"horizon_days": 21, "predicted_health_score": 82.0, "risk_level": "Low"}
+            {"horizon": "7-Day", "horizon_days": 7, "predicted_health": 74, "predicted_health_score": 74.0, "risk_level": "Medium"},
+            {"horizon": "14-Day", "horizon_days": 14, "predicted_health": 77, "predicted_health_score": 77.0, "risk_level": "Low-Medium"},
+            {"horizon": "21-Day", "horizon_days": 21, "predicted_health": 81, "predicted_health_score": 81.0, "risk_level": "Low"}
         ]
     }
